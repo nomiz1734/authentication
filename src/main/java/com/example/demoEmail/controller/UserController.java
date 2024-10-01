@@ -5,20 +5,29 @@ import com.example.demoEmail.dto.request.UserUpdateRequest;
 import com.example.demoEmail.dto.sdi.ClientSdi;
 import com.example.demoEmail.entity.User;
 import com.example.demoEmail.service.ClientService;
+import com.example.demoEmail.service.CloudinaryService;
 import com.example.demoEmail.service.UserService;
 import com.example.demoEmail.service.impl.ClientServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private final CloudinaryService cloudinaryService;
     //tao user moi
     @PostMapping
     User createUser(@RequestBody UserCreationRequest request){
@@ -38,9 +47,14 @@ public class UserController {
     }
 
     //cap nhat thong tin user
-    @PutMapping
-    User updateUser(@RequestBody UserUpdateRequest request){
+    @PutMapping("/update")
+    User updateUser(@RequestBody UserUpdateRequest request) throws IOException {
         return userService.updateUser(request);
+    }
+    @PutMapping("/upload")
+    public ResponseEntity<Map> uploadImage(@RequestParam("image") MultipartFile file){
+        Map data = this.cloudinaryService.upload(file);
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
     //xoa user
