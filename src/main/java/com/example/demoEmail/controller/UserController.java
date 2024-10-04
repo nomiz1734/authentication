@@ -1,5 +1,6 @@
 package com.example.demoEmail.controller;
 
+import com.example.demoEmail.dto.request.LoginRequest;
 import com.example.demoEmail.dto.request.UserCreationRequest;
 import com.example.demoEmail.dto.request.UserUpdateRequest;
 import com.example.demoEmail.dto.sdi.ClientSdi;
@@ -29,11 +30,15 @@ public class UserController {
     @Autowired
     private final CloudinaryService cloudinaryService;
     //tao user moi
-    @PostMapping
+    @PostMapping("/register")
     User createUser(@RequestBody UserCreationRequest request){
         return userService.createUser(request);
     }
-
+    @PostMapping("/login")
+    User checkLogin(@RequestBody LoginRequest loginRequest){
+        User user = userService.getUserByEmailPass(loginRequest.getEmail(), loginRequest.getPassword());
+        return user;
+    }
     //get list user
     @GetMapping
     List<User> getUsers(){
@@ -51,11 +56,11 @@ public class UserController {
     User updateUser(@RequestBody UserUpdateRequest request) throws IOException {
         return userService.updateUser(request);
     }
-    @PutMapping("/upload")
-    public ResponseEntity<Map> uploadImage(@RequestParam("image") MultipartFile file){
-        Map data = this.cloudinaryService.upload(file);
-        return new ResponseEntity<>(data, HttpStatus.OK);
-    }
+//    @PutMapping("/upload")
+//    public ResponseEntity<Map> uploadImage(@RequestParam("image") MultipartFile file){
+//        Map data = this.cloudinaryService.upload(file);
+//        return new ResponseEntity<>(data, HttpStatus.OK);
+//    }
 
     //xoa user
     @DeleteMapping("/{userId}")

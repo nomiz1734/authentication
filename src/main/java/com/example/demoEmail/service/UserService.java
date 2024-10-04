@@ -57,6 +57,12 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    public User getUserByEmailPass(String email, String password){
+        return userRepository.login(email,password).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
+
     public String uploadImage(MultipartFile file, String userId) throws IOException {
         User user = getUser(userId);
         Image imageData = imageRepository.save(Image.builder()
